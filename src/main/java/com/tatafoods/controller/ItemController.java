@@ -3,6 +3,9 @@ package com.tatafoods.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,7 @@ import com.tatafoods.dto.AddItemRequestDTO;
 import com.tatafoods.dto.ItemResponseDTO;
 import com.tatafoods.service.ItemService;
 import com.tatafoods.dto.UpdateItemRequestDTO;
+import com.tatafoods.dto.UpdateRatingDTO;
 
 import jakarta.websocket.server.PathParam;
 
@@ -28,13 +32,16 @@ public class ItemController {
 	ItemService itemService;
 	
 	@PostMapping("/add")
-	public ItemResponseDTO addItem(@RequestBody AddItemRequestDTO addItemRequestDTO) {
-		return itemService.addItem(addItemRequestDTO);	
+	public ResponseEntity<ItemResponseDTO> addItem(@RequestBody AddItemRequestDTO addItemRequestDTO) {
+		 ItemResponseDTO itemResponseDTO = itemService.addItem(addItemRequestDTO);	
+		 return new ResponseEntity<>(itemResponseDTO,HttpStatus.CREATED);
 	}
 	
 	@GetMapping
-	public List<ItemResponseDTO> getAllItems(){
-		return itemService.getAllItems();
+	public ResponseEntity<List<ItemResponseDTO>> getAllItems(){
+		List<ItemResponseDTO> allItems = itemService.getAllItems();
+//		return new ResponseEntity<>(allItems,HttpStatus.OK);
+		return ResponseEntity.ok(allItems);//only for ok method
 	}
 	
 	@GetMapping("/{itemId}")
@@ -57,6 +64,11 @@ public class ItemController {
 		return itemService.updateItem(id, updateItemRequestDTO);
 		
 		
+	}
+	
+	@PutMapping("/uRating")
+	public ItemResponseDTO updateRating(@RequestBody UpdateRatingDTO updateRatingDTO) {
+		return itemService.updateRating(updateRatingDTO);
 	}
 	
 	
