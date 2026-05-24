@@ -12,6 +12,8 @@ import com.tatafoods.dao.ItemRepository;
 import com.tatafoods.dto.AddItemRequestDTO;
 import com.tatafoods.dto.ItemResponseDTO;
 import com.tatafoods.dto.UpdateItemRequestDTO;
+import com.tatafoods.dto.UpdateRatingDTO;
+import com.tatafoods.exceptions.ItemNotFoundException;
 import com.tatafoods.model.Item;
 import com.tatafoods.service.ItemService;
 
@@ -45,7 +47,8 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public ItemResponseDTO getItem(int id) {
 		// TODO Auto-generated method stub
-		Item item = itemRepository.findById(id).get();
+		Item item = itemRepository.findById(id).
+				orElseThrow(()->new ItemNotFoundException("Item not Found with id "+id));
 		ItemResponseDTO response=new ItemResponseDTO();
 		BeanUtils.copyProperties(item, response);
 		return response;
@@ -86,6 +89,16 @@ public class ItemServiceImpl implements ItemService {
 		ItemResponseDTO itemResponseDTO = new ItemResponseDTO();
 		BeanUtils.copyProperties(savedItem,itemResponseDTO);
 		return itemResponseDTO;
+		
+	}
+	@Override
+	public ItemResponseDTO updateRating(UpdateRatingDTO updateRatingDTO) {
+		int itemId = itemRepository.updateRating(updateRatingDTO.getItemId(),updateRatingDTO.getRating());
+		Item item = itemRepository.findById(itemId).get();
+		ItemResponseDTO itemResponseDTO = new ItemResponseDTO();
+		BeanUtils.copyProperties(item, itemResponseDTO);
+		return itemResponseDTO;
+		
 		
 	}
 	
