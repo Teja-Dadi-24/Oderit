@@ -29,12 +29,28 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderResponseDTO placeOrder(PlaceOrderRequestDTO placeOrderRequestDTO) {
 		List<OrderItemRequestDTO> orderItemRequestList = placeOrderRequestDTO.getOrderItemRequestList();
+		List<Item> items=itemRepository.findAll();
+		for(OrderItemRequestDTO i:orderItemRequestList) {
+			int orderedItemId = i.getItemId();
+			int orderedQuantity = i.getQuantity();
+			for(Item j:items) {
+				if(j.getItemId()==orderedItemId) {
+					if(j.getStockQuantity()<orderedQuantity) {
+						return null;
+						
+					}
+				}
+			}
+		}
+		
 		List<OrderItem> orderItemList=new ArrayList<OrderItem>();
 		Order order =new Order();
 		double finalOrderPrice=0;
 		
 		for(OrderItemRequestDTO i:orderItemRequestList) {
 			Item item = itemRepository.findById(i.getItemId()).get();
+			item.setStockQuantity(item.getStockQuantity()-i.getQuantity());
+			itemRepository.save(item);
 			OrderItem orderItem=new OrderItem();
             orderItem.setItem(item);
             orderItem.setQuantity(i.getQuantity());
