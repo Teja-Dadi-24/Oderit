@@ -51,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
 			Item item = itemRepository.findById(i.getItemId()).get();
 			item.setStockQuantity(item.getStockQuantity()-i.getQuantity());
 			itemRepository.save(item);
-			OrderItem orderItem=new OrderItem();
+			OrderItem orderItem=new OrderItem();//djenjfjr
             orderItem.setItem(item);
             orderItem.setQuantity(i.getQuantity());
             double itemPrice=item.getPrice()*i.getQuantity();
